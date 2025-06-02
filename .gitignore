@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.pnp/
+
+# Next.js and frontend builds
+.next/
+out/
+dist/
+build/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.sqlite3
+db.sqlite3
+
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# IDE and OS files
+.idea/
+.vscode/
+.vs/
+.DS_Store
+Thumbs.db
+
+# Logs and env files
+*.log
+.env
+.env.*
