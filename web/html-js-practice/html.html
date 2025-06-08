@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yeni Proje</title>
+    
+    <link rel="stylesheet" >
+</head>
+<body>
+
+    <main>
+        <h1>Merhaba Dünya!</h1>
+        <p>Proje iskeletin hazır.</p>
+    </main>
+
+    <script>
+        const popSarkilar = ["Simge - Aşkın Olayım", "Mabel Matiz - Antidepresan"];
+        const rockSarkilar = ["Duman - Senden Daha Güzel", "Mor ve Ötesi - Cambaz"];
+
+        // Soru 1: Spread operator (...) kullanarak bu ikisini ve "Tarkan - Kuzu Kuzu"yu
+        // tek bir 'tumSarkilar' dizisinde birleştir.
+        const tumSarkilar = [ ...popSarkilar]+[...rockSarkilar]+["Tarkan - Kuzu Kuzu"];
+        
+        // Soru 2: Rest parametresi kullanarak fonksiyonu tamamla
+        const playlisteEkle = (playlistAdi, ...sarkilar) => {
+        console.log(playlistAdi + " listesine şu şarkılar eklendi:");
+        console.log(sarkilar); // Bu bir dizi olmalı
+
+}
+
+playlisteEkle("Yol Şarkıları", "Tarkan", "Duman", "Athena");
+const sepet = [
+    { urun: "Telefon", fiyat: 20000, stokta: true },
+    { urun: "Kılıf", fiyat: 500, stokta: true },
+    { urun: "Şarj Aleti", fiyat: 1000, stokta: false }, // Stokta yok!
+    { urun: "Kulaklık", fiyat: 3000, stokta: true }
+];
+
+const büyükler=sepet.filter((element)=>element.fiyat>1000);
+const toplam= sepet.reduce((accumulator,element) => accumulator +element.fiyat,0);
+const stoktaolan=sepet.filter(stoktaVarmi);
+stoktaolan.forEach(display);
+sadeceisimler=sepet.map(sadeceİsim);
+
+function stoktaVarmi(element){
+    return element.stokta===true;
+
+}
+function display (element){
+    console.log(element);
+}
+function sadeceİsim(element){
+    return element.urun
+}
+
+
+const sifreUret = function(uzunluk) {
+    const karakterler = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let sifre = "";
+    for (let i=0;i<uzunluk;i++){
+        index=Math.floor(Math.random() * karakterler.length);
+        sifre+=karakterler[index];
+
+    }
+    console.log(sifreUret);
+    // Döngü kurup rastgele karakter seçip sifre'ye ekle
+    // İpucu: Math.floor(Math.random() * karakterler.length) sana rastgele index verir.
+    
+    return sifre;
+};
+
+console.log(sifreUret(10)); // Örn: "aB93kD2s1Z"
+
+
+
+
+
+
+    </script>
+</body>
+</html>

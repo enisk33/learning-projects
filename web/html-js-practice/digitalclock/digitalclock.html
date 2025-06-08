@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yeni Proje</title>
+    <style>
+        /* 1. ADIM: body etiketini bir kutu gibi düşün ve ekranı kaplat */
+        body {
+            background-image: url('sayfa.jpg');
+            background-position: center;
+            background-size: cover; /* Resmi ekrana tam yayar */
+            
+            height: 100vh; /* ÖNEMLİ: Ekranın yüksekliğinin %100'ünü kapla */
+            margin: 0;     /* Kenar boşluklarını sıfırla */
+
+            /* 2. ADIM: İçindeki her şeyi (saat kutusunu) tam ortaya getir */
+            display: flex;
+            justify-content: center; /* Yatayda orta */
+            align-items: center;     /* Dikeyde orta */
+        }
+
+        .saat {
+            /* Buradaki ortalama kodlarını body'ye taşıdık, burayı sadeleştirdik */
+            font-size: 60px; /* Yazıyı büyütelim */
+            color: white;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px #000000; /* Yazı okunsun diye gölge */
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="saat">
+        
+        <div id="yazı">00:00:00</div>
+    </div>
+
+    <script>
+         function sayac(){
+        const yazıyıal=document.getElementById("yazı");
+        const now=new Date();
+        const hours=now.getHours();
+        const minutes=now.getMinutes();
+        const seconds=now.getSeconds();
+        let parametreler=[hours,minutes,seconds];
+        
+
+        let formatliZaman = parametreler.map(zaman => String(zaman).padStart(2, '0')  );
+
+
+           
+        const TimeString=`${formatliZaman[0]}:${formatliZaman[1]}:${formatliZaman[2]}`
+        yazıyıal.textContent=TimeString;
+        }
+        setInterval(sayac,1000);
+        sayac()
+
+    </script>
+</body>
+</html>
