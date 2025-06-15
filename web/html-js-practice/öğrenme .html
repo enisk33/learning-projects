@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yeni Proje</title>
+    <style>
+       
+  /* Sayfanın genel ayarı */
+  body { margin: 0; font-family: sans-serif; }
+
+  /* 1. Tepe Kutu Ayarları */
+  .tepe-kutu {
+    background-color: #ffcccc; /* Açık Kırmızı */
+    padding: 30px;
+    text-align: center;
+  }
+
+  /* 2. Menü Kutusu Ayarları */
+  .menu-kutusu {
+    background-color: #333; /* Siyah */
+    color: white;
+    padding: 10px;
+    text-align: center;
+  }
+  .menu-kutusu a { color: white; }
+
+  /* 3. ORTA ALAN (SİHİR BURADA) */
+  .orta-alan-babasi {
+    display: flex; /* "Çocukları yan yana diz" komutu */
+  }
+
+  /* Sol ve Sağdaki dar kutular */
+  .sol-kutu, .sag-kutu {
+    background-color: #ddd; /* Gri */
+    flex: 1; /* 1 birim yer kapla */
+    padding: 20px;
+    height: 200px; /* Yükseklik verelim görünsün */
+  }
+
+  /* Ortadaki geniş kutu */
+  .orta-icerik {
+    background-color: #f1f1f1; /* Açık gri */
+    flex: 2; /* Kenarlardakinden 2 kat geniş ol! */
+    padding: 20px;
+  }
+
+  /* 4. En Alt Kutu Ayarları */
+  .alt-kutu {
+    background-color: #777;
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+</style>
+    </style>
+</head>
+<body>
+    <div class="tepe-kutu">
+    <h1>Sitemin Başlığı</h1>
+  </div>
+
+  <div class="menu-kutusu">
+    <a href="#">Ana Sayfa</a> | <a href="#">Hakkımızda</a>
+  </div>
+
+  <div class="orta-alan-babasi">
+    
+    <div class="sol-kutu">
+      Linkler vs.
+    </div>
+
+    <div class="orta-icerik">
+      Esas yazılar burada...
+    </div>
+
+    <div class="sag-kutu">
+      Reklamlar vs.
+    </div>
+
+  </div>
+
+  <div class="alt-kutu">
+    Telif Hakkı Yazıları
+  </div>
+
+    <script>
+         
+    </script>
+</body>
+</html>

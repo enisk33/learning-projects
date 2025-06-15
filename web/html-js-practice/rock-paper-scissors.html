@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock-Paper-Scissors Oyunu</title>
+    
+    <style>
+        /* CSS Sıfırlama ve Temel Ayarlar */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* BODY: Sayfayı ortalama */
+        body {
+            min-height: 100vh; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f3f5; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* CONTAINER: Ana Kart */
+        .container {
+            width: 500px; /* Genişliği artırdık */
+            padding: 30px;
+            text-align: center;
+            background-color: #ffffff; 
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); 
+            color: #333; 
+        }
+        
+        h1 {
+            margin-bottom: 25px;
+            font-size: 2.2em;
+            color: #00796b; 
+        }
+
+        /* ------------------------------------- */
+        /* GÖRSEL SEÇİM ALANI (FLEX YAPISI)    */
+        /* ------------------------------------- */
+
+        .görseller {
+            display: flex;
+            /* İlk başta butonlar arasında boşluk bırakır */
+            justify-content: space-around; 
+            margin-bottom: 30px;
+            min-height: 120px; /* Görsel alanın yüksekliğini korur */
+            align-items: center;
+            position: relative;
+        }
+
+        /* Bütün Butonların Temel Stili */
+        .görseller button, #oyuncu-secimi-gorsel, #bilgisayar-secimi-gorsel {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%; 
+            color: white; 
+            font-size: 60px; /* Yeni sembol boyutu */
+            line-height: 0; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        /* OYUNCU BUTONLARI (Normal Durum) */
+        .görseller button {
+            background-color: hsl(187, 100%, 42%); 
+            border: 6px solid #00796b; 
+        }
+
+        /* Seçim Yapıldıktan Sonra Butonların Gizlenmesi */
+        .görseller button.gizle {
+            opacity: 0;
+            pointer-events: none;
+            /* Seçimi gizlediğimizde animasyonla dışarı kaydırırız (isteğe bağlı) */
+            transform: scale(0.5); 
+        }
+
+        /* Oyuncu Seçimi Yapıldıktan Sonra Gelen Görsel */
+        #oyuncu-secimi-gorsel {
+            background-color: #ff9800; /* OYUNCU: Canlı Turuncu */
+            border: 6px solid #e65100;
+            position: absolute;
+            left: 5%; /* SOL TARAFA SABİTLEDİK */
+            opacity: 0;
+            transform: scale();
+            pointer-events: none;
+            /* Bu kodun mevcut olması gerekiyor! */
+            transition: all 0.2s;
+        }
+        /* Bilgisayar Seçimi Yapıldıktan Sonra Gelen Görsel */
+        #bilgisayar-secimi-gorsel {
+            background-color: #673ab7; /* BİLGİSAYAR: Koyu Mor/Lila */
+            border: 6px solid #512da8;
+            position: absolute;
+            right: 5%; /* SAĞ TARAFA SABİTLEDİK */
+            opacity: 0;
+            transform: scale(0.5);
+            pointer-events: none;
+            /* Bu kodun mevcut olması gerekiyor! */
+            
+        }
+
+        /* Seçim yapıldığında iki yeni görseli ortaya çıkarır */
+        .göster {
+            opacity: 1 !important;
+            transform: scale(1) !important;
+            pointer-events: all !important;
+        }
+
+        /* Sonuçlar Alanı */
+        .sonuçlar {
+            margin-top: 20px;
+            background-color: #e0f2f1; 
+            padding: 18px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #004d40; 
+            border-left: 5px solid #00796b;
+            text-align: left;
+        }
+        
+        #oyun-sonucu {
+            margin-top: 15px;
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #004d40;
+            padding: 5px;
+        }
+        
+        .temizle button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #e0f2f1;
+            border: 2px solid #00796b;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>TAŞ-KAĞIT-MAKAS</h1> 
+    
+    <div class="görseller" id="gorseller-alani"> 
+        <button data-secim="tas">✊</button>
+        <button data-secim="kagit">✋</button>
+        <button data-secim="makas">✌️</button>
+        
+        <div id="oyuncu-secimi-gorsel"></div>
+        <div id="bilgisayar-secimi-gorsel"></div>
+    </div>
+    
+    <div class="temizle">
+        <button id="temizle-butonu">Yeni Oyun</button>
+    </div>
+    
+    <div class="sonuçlar">
+        <p>Oyuncu Seçimi: <span id="oyuncu-secimi-goster">...</span></p>
+        <p>Bilgisayar Seçimi: <span id="bilgisayar-secimi-goster">...</span></p>
+        <div id="oyun-sonucu"></div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // ** DOM Elementlerini Seçme **
+        const buttons = document.querySelectorAll(".görseller button");
+        const temizleButonu = document.getElementById("temizle-butonu");
+        
+        // Sabit konumlu görsel alanları
+        const oyuncuSecimiGorsel = document.getElementById("oyuncu-secimi-gorsel");
+        const bilgisayarSecimiGorsel = document.getElementById("bilgisayar-secimi-gorsel");
+        
+        // Metin sonuç alanları
+        const oyuncuSecimiGoster = document.getElementById("oyuncu-secimi-goster");
+        const bilgisayarSecimiGoster = document.getElementById("bilgisayar-secimi-goster");
+        const oyunSonucuGoster = document.getElementById("oyun-sonucu");
+
+        // Seçimlerimizi tutacak dizi
+        const secimler = ["tas", "kagit", "makas"];
+        const secimEmojileri = {
+            "tas": "✊",
+            "kagit": "✋",
+            "makas": "✌️"
+        };
+        
+        let oyunDevamEdiyor = true;
+
+        // ** A. Oyun Mantığı Fonksiyonu **
+        function oyunuOyna(oyuncuSecimi) {
+            if (!oyunDevamEdiyor) return;
+            
+            // 1. Bilgisayarın Seçimi
+            const rastgeleIndex = Math.floor(Math.random() * secimler.length);
+            const bilgisayarSecimi = secimler[rastgeleIndex];
+            
+            // 2. Görünümü Güncelle (Yeni sabit konumlara yerleştirme)
+            guncelleGörünüm(oyuncuSecimi, bilgisayarSecimi);
+            
+            // 3. Sonucu Belirle
+            let sonucMesaji = "";
+
+            if (oyuncuSecimi === bilgisayarSecimi) {
+                sonucMesaji = "Berabere!";
+            } else if (
+                (oyuncuSecimi === "tas" && bilgisayarSecimi === "makas") ||
+                (oyuncuSecimi === "kagit" && bilgisayarSecimi === "tas") ||
+                (oyuncuSecimi === "makas" && bilgisayarSecimi === "kagit")
+            ) {
+                sonucMesaji = "Kazandınız!";
+            } else {
+                sonucMesaji = "Kaybettiniz!";
+            }
+            
+            // 4. Sonuçları Ekranda Göster
+            oyuncuSecimiGoster.textContent = `${secimEmojileri[oyuncuSecimi]} (${oyuncuSecimi.toUpperCase()})`;
+            bilgisayarSecimiGoster.textContent = `${secimEmojileri[bilgisayarSecimi]} (${bilgisayarSecimi.toUpperCase()})`;
+            oyunSonucuGoster.textContent = sonucMesaji;
+            
+            // 5. Oyun bitti
+            oyunDevamEdiyor = false;
+        }
+        
+        // ** B. Görünümü Güncelleyen Fonksiyon **
+        function guncelleGörünüm(oyuncuSecimi, bilgisayarSecimi) {
+            // Seçim butonlarını gizle
+            buttons.forEach(btn => {
+                btn.classList.add("gizle");
+            });
+            
+            // Oyuncu ve bilgisayarın sabit yerdeki görsellerini hazırla ve göster
+            oyuncuSecimiGorsel.textContent = secimEmojileri[oyuncuSecimi];
+            bilgisayarSecimiGorsel.textContent = secimEmojileri[bilgisayarSecimi];
+
+            oyuncuSecimiGorsel.classList.add("göster");
+            bilgisayarSecimiGorsel.classList.add("göster");
+        }
+        
+        // ** C. Yeni Oyun Başlatma Fonksiyonu **
+        function oyunuTemizle() {
+            // Butonları tekrar görünür yap
+            buttons.forEach(btn => {
+                btn.classList.remove("gizle");
+                btn.style.transform = "scale(1)"; // Mouse leave efekti için
+            });
+            
+            // Sabit görselleri gizle
+            oyuncuSecimiGorsel.classList.remove("göster");
+            bilgisayarSecimiGorsel.classList.remove("göster");
+            
+            // Metin alanlarını sıfırla
+            oyuncuSecimiGoster.textContent = "...";
+            bilgisayarSecimiGoster.textContent = "...";
+            oyunSonucuGoster.textContent = "";
+            
+            oyunDevamEdiyor = true;
+        }
+
+        // ** D. Olay Dinleyicileri **
+        
+        // 1. Oyuncu Butonları
+        buttons.forEach(button => {
+            // Mouse Üzerine Geldiğinde (Hover Efekti)
+            button.addEventListener("mouseenter", event => {
+                if (oyunDevamEdiyor) event.target.style.transform = "scale(1.1)";
+            });
+            
+            // Mouse Üzerinden Ayrıldığında
+            button.addEventListener("mouseleave", event => {
+                if (oyunDevamEdiyor) event.target.style.transform = "scale(1)";
+            });
+            
+            // Tıklama Olayı (Oyun Başlatma)
+            button.addEventListener("click", event => {
+                if (oyunDevamEdiyor) {
+                    const oyuncuSecimi = event.target.getAttribute("data-secim");
+                    oyunuOyna(oyuncuSecimi);
+                }
+            });
+        });
+        
+        // 2. Temizle Butonu
+        temizleButonu.addEventListener("click", oyunuTemizle);
+
+        // Başlangıç ayarları
+        oyunuTemizle();
+    });
+</script>
+</body>
+</html>

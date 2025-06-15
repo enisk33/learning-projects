@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Stopwatch</title>
+    <style>
+        /* --- CSS (GÖRÜNÜM) KISMI --- */
+        body {
+            height: 100vh;
+            margin: 0;
+            background-color: #2c3e50;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .kapsayici {
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
+            width: 380px; /* Genişliği biraz arttırdım sığsın diye */
+        }
+
+        .baslik h1 {
+            margin: 0;
+            color: #333;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .kronometre-yazisi {
+            font-size: 55px; /* Rakamları büyüttüm */
+            font-weight: bold;
+            color: #2c3e50;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 20px 0;
+        }
+
+        /* Salise kısmı biraz daha silik ve küçük olsun */
+        .salise-kutusu {
+            font-size: 30px;
+            color: #e74c3c;
+        }
+
+        .butonlar {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+            color: white;
+            min-width: 80px;
+        }
+
+        button:active { transform: scale(0.95); }
+
+        .btn-start { background-color: #27ae60; }
+        .btn-stop  { background-color: #c0392b; }
+        .btn-reset { background-color: #7f8c8d; }
+    </style>
+</head>
+<body>
+
+    <div class="kapsayici">
+        
+        <div class="baslik">
+            <h1>Stopwatch</h1>
+        </div>
+
+        <!-- HTML DEĞİŞİKLİĞİ: Her sayıya özel bir ID verdim -->
+        <div class="kronometre-yazisi">
+            <span id="dakika">00</span>:<span id="saniye">00</span><span class="salise-kutusu">.<span id="salise">00</span></span>
+        </div>
+
+        <div class="butonlar">
+            <button class="btn-start" onclick="baslat()">Start</button>
+            <button class="btn-stop" onclick="durdur()">Stop</button>
+            <button class="btn-reset" onclick="sifirla()">Reset</button>
+        </div>
+
+    </div>
+
+    <!-- --- JAVASCRIPT (BEYİN) KISMI --- -->
+    <script>
+        // Değişkenlerimizi tanımlayalım (Hafıza kutuları)
+        let zamanlayici;      // setInterval'ın kimlik numarası
+        let gecenSure = 0;    // Toplam geçen milisaniye
+        let baslangicZamani = 0; // Start'a basıldığı an
+        let calisiyorMu = false; // Şu an sayıyor mu?
+
+        // HTML'deki sayı kutularını seçelim
+        const dakikaKutusu = document.getElementById("dakika");
+        const saniyeKutusu = document.getElementById("saniye");
+        const saliseKutusu = document.getElementById("salise");
+
+        function baslat() {
+            // Eğer zaten çalışıyorsa tekrar başlatma (Hata olur)
+            if (calisiyorMu) return;
+
+            calisiyorMu = true;
+
+            // MATEMATİKSEL HİLE: 
+            // Şu anki zamandan, daha önce geçen süreyi çıkarıyoruz.
+            // Böylece durdurup tekrar başlattığında sıfırdan değil, kaldığı yerden devam eder.
+            baslangicZamani = Date.now() - gecenSure;
+
+            // Her 10 milisaniyede bir "güncelle" fonksiyonunu çalıştır
+            zamanlayici = setInterval(guncelle, 10);
+        }
+
+        function durdur() {
+            if (!calisiyorMu) return; // Zaten durmuşsa işlem yapma
+
+            calisiyorMu = false;
+            clearInterval(zamanlayici); // Döngüyü iptal et
+        }
+
+        function sifirla() {
+            durdur(); // Önce durdur
+            gecenSure = 0; // Süreyi sıfırla
+            ekraniYazdir(0, 0, 0); // Ekranı 00:00:00 yap
+        }
+
+        function guncelle() {
+            const simdikiZaman = Date.now();
+            
+            // Start'a basıldığından beri ne kadar zaman geçti?
+            gecenSure = simdikiZaman - baslangicZamani;
+
+            // --- MATEMATİKSEL DÖNÜŞÜMLER ---
+            
+            // 1. Salise (Milisaniyenin ilk 2 hanesi)
+            let salise = Math.floor((gecenSure % 1000) / 10);
+
+            // 2. Saniye (Toplam saniyenin 60'a bölümünden kalan)
+            let saniye = Math.floor((gecenSure / 1000) % 60);
+
+            // 3. Dakika
+            let dakika = Math.floor(gecenSure / (1000 * 60));
+
+            // Hesaplanan değerleri ekrana yazdır
+            ekraniYazdir(dakika, saniye, salise);
+        }
+
+        function ekraniYazdir(dk, sn, sl) {
+            // padStart(2, "0") -> Sayı tek haneyse başına 0 koyar (9 -> 09)
+            dakikaKutusu.textContent = dk.toString().padStart(2, "0");
+            saniyeKutusu.textContent = sn.toString().padStart(2, "0");
+            saliseKutusu.textContent = sl.toString().padStart(2, "0");
+        }
+    </script>
+     
+</body>
+</html>

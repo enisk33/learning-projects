@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hava Durumu Uygulaması</title>
+    
+    <style>
+        /* CSS kodları değişmedi, sadece HTML yapısına uyum için küçük ayarlamalar yapıldı */
+        body {
+            font-family: Arial, sans-serif;
+            width: 300px;
+            margin: auto;
+            padding-top: 20px;
+            background-color: #f4f4f9;
+        }
+        #hava-bilgileri { /* ID boşluksuz olarak düzeltildi */
+            padding: 15px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+        img {
+            width: 50px;
+            height: 50px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        button {
+             padding: 8px 15px;
+             background-color: #007bff;
+             color: white;
+             border: none;
+             cursor: pointer;
+             border-radius: 5px;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <input class="şehirgir" id="sehirgir" placeholder="Bir Şehir Giriniz">
+        <button class="buton" id="button">Havayı Öğren </button>
+        
+        <div id="hava-bilgileri"> 
+            <p>Tarih: <span id="tarih"></span></p>
+            <p>Durum: <span id="durum"></span></p>
+            <p>Hava Derecesi: <span id="derece"></span></p>
+            <p>Nem: <span id="nem"></span></p>
+            <p><img src="" id="foto" alt="Hava Durumu İkonu" style="display:none"></p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elementlerini sadece BİR KEZ seçin
+        const girisal = document.getElementById("sehirgir");
+        const buton = document.getElementById('button');
+        const tarihSpan = document.getElementById("tarih");
+        const dereceSpan = document.getElementById("derece");
+        const nemSpan = document.getElementById("nem");
+        const fotoImg = document.getElementById("foto");
+        const durumSpan = document.getElementById("durum"); // Yeni eklenen durum spanı
+
+        // ⚠️ API Key sadece değeri olmalı. Önek header içinde eklenecek.
+        const API_KEY_VALUE = "4HRTNybZjawfjB4KB9lnEi:5jeHpm2zir90OkT1eeosrK"; 
+        
+        // Olay dinleyiciyi butona ekliyoruz
+        buton.addEventListener('click', function() {
+            // TIKLAMA ANINDA GÜNCEL ŞEHİR DEĞERİNİ AL
+            const sehir = girisal.value.trim().toLowerCase();
+            fetchData(sehir);
+        });
+
+        async function fetchData(city){
+            
+            // Eğer şehir boşsa API isteği gönderme
+            if (!city) {
+                dereceSpan.textContent = "Lütfen bir şehir adı giriniz.";
+                return;
+            }
+
+            // GÜNCEL ŞEHİR İLE API URL'sini OLUŞTUR
+            const APIURL = `https://api.collectapi.com/weather/getWeather?lang=tr&city=${city}`;
+            
+            try{
+                const requestOptions = {
+                    method:'GET',
+                    headers:{
+                        // Doğru format: apikey [ANAHTAR]
+                        'Authorization': `apikey ${API_KEY_VALUE}`, 
+                        'Content-Type': "application/json"
+                    }
+                };
+                
+                const response = await fetch(APIURL, requestOptions);
+                
+                if (response.status === 429) {
+                    dereceSpan.textContent = "Hata: Kota/Hız Sınırını Aştınız. Lütfen bekleyin.";
+                    return;
+                }
+
+                if (!response.ok){
+                    throw new Error(`API Hatası: ${response.status}. Şehir bulunamadı veya API sorunu.`);
+                }
+                
+                const data = await response.json();
+                console.log(data);
+                
+                // Veriyi Ekrana Yazma
+               if (Array.isArray(data) && data.length > 0) { 
+    // Array(7) dizisinin ilk elementini (bugünün tahminini) al
+    const bugununHavaDurumu = data[0]; 
+
+    // HTML elementlerine verileri yerleştirme
+            tarihSpan.textContent = bugununHavaDurumu.dates; // 'dates' alanı
+            dereceSpan.textContent = `${bugununHavaDurumu.degree}°C`; 
+            nemSpan.textContent = `%${bugununHavaDurumu.humidity}`;
+            fotoImg.src = bugununHavaDurumu.icon;
+            fotoImg.alt = bugununHavaDurumu.day;
+            fotoImg.style.display = "block"; // CSS ataması böyle yapılmalıdır.
+            durumSpan.textContent = bugununHavaDurumu.day; 
+    
+            } else {
+            // Veri gelmediyse veya dizi boşsa bu mesajı gösterir.
+            dereceSpan.textContent = "Veri alınamadı veya şehir geçersiz.";
+            }
+
+            } 
+            catch(error) {
+                console.error("Fetch Hatası:", error);
+                dereceSpan.textContent = `Hata: ${error.message}`;
+            }
+        }
+    </script>
+
+</body>
+</html>
