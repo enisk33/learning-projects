@@ -1,0 +1,43 @@
+/* BU 3 SATIR EN TEPEDE VE ARASINDA BAŞKA KOD OLMADAN DURMALI */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Buradan sonrası senin özel ayarların */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  /* bg-background bazen tanımlı olmayabilir, garanti olması için bg-gray-50 */
+  @apply bg-gray-50 text-gray-900;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Mantine bileşenlerini Tailwind ile ezmek için */
+@layer components {
+  /* Modal içeriğini stillendir ama overlay'i bozma */
+  .mantine-Modal-content {
+    @apply !bg-white !rounded-2xl !shadow-xl !p-0 !border-0 !max-w-2xl;
+  }
+  
+  /* Modal overlay'i görünür tut */
+  .mantine-Modal-overlay {
+    @apply !bg-black/50 !backdrop-blur-sm;
+  }
+  
+  .mantine-Button-root {
+    @apply !font-medium;
+  }
+}
+
+/* Hata veren kısım burasıydı, yukarıdaki @tailwind utilities ile artık barıştılar */
+@layer utilities {
+  .mantine-override {
+    all: revert;
+  }
+}
